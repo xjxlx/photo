@@ -256,6 +256,5 @@ class PhotoUtil {
         }
         return path
     }
-
 }
 
