@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.github.xjxlx'
-version = '1.2.0'
+version = '1.3.0'
 
 def version = rootProject.ext.android
 
@@ -59,7 +59,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.xjxlx.photoselector'// groupId 随便取，jitpack不会使用
                 artifactId = 'android-example'// artifactId 随便取,jitpack不会使用
-                version = '1.2.0' // version 随便取，jitpack不会使用
+                version = '1.3.0' // version 随便取，jitpack不会使用
             }
         }
     }
