@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    api 'io.github.lucksiege:pictureselector:v3.11.1' // 图片选择库
+    implementation 'io.github.lucksiege:pictureselector:v3.11.1' // 图片选择库
     implementation 'io.github.lucksiege:compress:v3.11.1' // 图片压缩
 
     implementation 'com.github.bumptech.glide:glide:4.15.1' // glide 图片加载库 ，尽量自己使用，避免版本冲突
