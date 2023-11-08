@@ -1,0 +1,4 @@
+rootProject.name = "photo"
+
+include ':app'
+include ':selector'
