@@ -32,6 +32,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    // 更改缓存时间
+    configurations.all {
+        resolutionStrategy {
+            cacheChangingModulesFor(0,"seconds")
+        }
+    }
 }
 
 dependencies {
