@@ -1,11 +1,11 @@
 package com.android.selector.photo
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.android.selector.interfaces.PhotoCallBackListener
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -23,7 +23,7 @@ class PhotoUtil {
     private var mContext: Context? = null
     private val mListPhoto = mutableListOf<String>()
 
-    fun openPhotoCamera(activity: FragmentActivity, listener: PhotoCallBackListener) {
+    fun openPhotoCamera(activity: Activity, listener: PhotoCallBackListener) {
         mContext = activity
         openPhotoCamera(PictureSelector.create(activity), listener)
     }
@@ -72,7 +72,9 @@ class PhotoUtil {
     }
 
     @JvmOverloads
-    fun openPhotoGallery(activity: FragmentActivity, listener: PhotoCallBackListener, maxSize: Int = 9, spanCount: Int = 4) {
+    fun openPhotoGallery(
+        activity: Activity, listener: PhotoCallBackListener, maxSize: Int = 9, spanCount: Int = 4
+    ) {
         mContext = activity
         openPhotoGallery(PictureSelector.create(activity), listener, maxSize, spanCount)
     }
@@ -135,7 +137,12 @@ class PhotoUtil {
      * @param videoQuality 视频的录制质量，1：高质量 2：底质量
      */
     @JvmOverloads
-    fun openVideoCamera(activity: FragmentActivity, listener: PhotoCallBackListener, maxDuration: Int = 60, videoQuality: Int = 1) {
+    fun openVideoCamera(
+        activity: Activity,
+        listener: PhotoCallBackListener,
+        maxDuration: Int = 60,
+        videoQuality: Int = 1
+    ) {
         mContext = activity
         openVideoCamera(PictureSelector.create(activity), listener, maxDuration, videoQuality)
     }
@@ -169,7 +176,9 @@ class PhotoUtil {
     }
 
     @JvmOverloads
-    fun openVideoGallery(activity: FragmentActivity, listener: PhotoCallBackListener, maxSize: Int = 9, spanCount: Int = 4) {
+    fun openVideoGallery(
+        activity: Activity, listener: PhotoCallBackListener, maxSize: Int = 9, spanCount: Int = 4
+    ) {
         openVideoGallery(PictureSelector.create(activity), listener, maxSize, spanCount)
     }
 
@@ -257,4 +266,3 @@ class PhotoUtil {
         return path
     }
 }
-

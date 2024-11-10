@@ -1,5 +1,6 @@
 package com.android.app
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +13,7 @@ import com.android.selector.photo.PhotoUtil
 class MainActivity : AppCompatActivity() {
 
     private val photoUtil = PhotoUtil()
-    private val context: FragmentActivity by lazy {
+    private val context: Activity by lazy {
         return@lazy this@MainActivity
     }
 
