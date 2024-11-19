@@ -340,46 +340,32 @@ class PhotoUtil {
     }
 
     companion object {
-        private fun isUri(uriString: String): Boolean =
-            try {
-                Uri.parse(uriString)
-                true
-            } catch (e: Exception) {
-                false
-            }
-
         /**
          * 从uri中获取path路径
          */
         @JvmStatic
         fun getPathForUri(
             context: Context,
-            path: String,
+            uri: Uri?,
         ): String {
             var tempPath = ""
-            if (TextUtils.isEmpty(path)) {
-                tempPath = path
-            }
-
-            val uri = isUri(path)
-            if (uri) {
-                val parse = Uri.parse(path)
-                val scheme = parse.scheme
+            if (uri != null) {
+                val scheme = uri.scheme
                 if (TextUtils.isEmpty(scheme)) {
-                    parse.path?.let {
+                    uri.path?.let {
                         tempPath = it
                     }
                 } else if (TextUtils.equals(ContentResolver.SCHEME_FILE, scheme)) {
                     // file:// 开头的
-                    parse.path?.let {
+                    uri.path?.let {
                         tempPath = it
                     }
                 } else if (TextUtils.equals(ContentResolver.SCHEME_CONTENT, scheme)) {
                     // 使用选择器的三方类库去获取
-                    tempPath = PictureFileUtils.getPath(context, parse)
+                    tempPath = PictureFileUtils.getPath(context, uri)
                 }
             } else {
-                println("不是一个uri的path, stop...")
+                println("uri is null, stop...")
             }
             return tempPath
         }
