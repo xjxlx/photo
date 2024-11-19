@@ -1,17 +1,22 @@
-@Suppress("DSL_SCOPE_VIOLATION") plugins {
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
 }
 
 android {
     namespace = "com.android.app"
-    compileSdk = libs.versions.compileSdks.get()
-        .toInt()
+    compileSdk =
+        libs.versions.compileSdks
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.android.app"
-        minSdk = libs.versions.minSdk.get()
-            .toInt()
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 28
         versionCode = 2

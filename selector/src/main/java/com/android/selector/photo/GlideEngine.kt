@@ -16,20 +16,32 @@ open class GlideEngine private constructor() : ImageEngine {
      * @param url       资源url
      * @param imageView 图片承载控件
      */
-    override fun loadImage(context: Context, url: String, imageView: ImageView) {
+    override fun loadImage(
+        context: Context,
+        url: String,
+        imageView: ImageView,
+    ) {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
-        Glide.with(context)
+        Glide
+            .with(context)
             .load(url)
             .into(imageView)
     }
 
-    override fun loadImage(context: Context, imageView: ImageView, url: String, maxWidth: Int, maxHeight: Int) {
+    override fun loadImage(
+        context: Context,
+        imageView: ImageView,
+        url: String,
+        maxWidth: Int,
+        maxHeight: Int,
+    ) {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
-        Glide.with(context)
+        Glide
+            .with(context)
             .load(url)
             .override(maxWidth, maxHeight)
             .into(imageView)
@@ -42,11 +54,16 @@ open class GlideEngine private constructor() : ImageEngine {
      * @param url       图片路径
      * @param imageView 承载图片ImageView
      */
-    override fun loadAlbumCover(context: Context, url: String, imageView: ImageView) {
+    override fun loadAlbumCover(
+        context: Context,
+        url: String,
+        imageView: ImageView,
+    ) {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
-        Glide.with(context)
+        Glide
+            .with(context)
             .asBitmap()
             .load(url)
             .override(180, 180)
@@ -63,15 +80,20 @@ open class GlideEngine private constructor() : ImageEngine {
      * @param url       图片路径
      * @param imageView 承载图片ImageView
      */
-    override fun loadGridImage(context: Context, url: String, imageView: ImageView) {
+    override fun loadGridImage(
+        context: Context,
+        url: String,
+        imageView: ImageView,
+    ) {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
-        Glide.with(context)
+        Glide
+            .with(context)
             .load(url)
             .override(200, 200)
             .centerCrop()
-            //.placeholder(R.drawable.ps_image_placeholder)
+            // .placeholder(R.drawable.ps_image_placeholder)
             .into(imageView)
     }
 
@@ -79,7 +101,8 @@ open class GlideEngine private constructor() : ImageEngine {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
-        Glide.with(context)
+        Glide
+            .with(context)
             .pauseRequests()
     }
 
@@ -87,7 +110,8 @@ open class GlideEngine private constructor() : ImageEngine {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
-        Glide.with(context)
+        Glide
+            .with(context)
             .resumeRequests()
     }
 
@@ -96,8 +120,6 @@ open class GlideEngine private constructor() : ImageEngine {
     }
 
     companion object {
-        fun createGlideEngine(): GlideEngine {
-            return InstanceHolder.instance
-        }
+        fun createGlideEngine(): GlideEngine = InstanceHolder.instance
     }
 }

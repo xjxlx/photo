@@ -7,17 +7,18 @@ import android.text.TextUtils
 import com.luck.picture.lib.utils.PictureFileUtils
 
 class UriUtil {
-
-    fun isUri(uriString: String): Boolean {
-        return try {
+    fun isUri(uriString: String): Boolean =
+        try {
             Uri.parse(uriString)
             true
         } catch (e: Exception) {
             false
         }
-    }
 
-    fun uriToPath(context: Context, uriString: String): String {
+    fun uriToPath(
+        context: Context,
+        uriString: String,
+    ): String {
         var result = ""
         runCatching {
             val uri = Uri.parse(uriString)
@@ -42,5 +43,4 @@ class UriUtil {
         }
         return result
     }
-
 }
