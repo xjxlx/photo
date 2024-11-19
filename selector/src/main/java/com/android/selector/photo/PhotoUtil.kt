@@ -351,6 +351,7 @@ class PhotoUtil {
         /**
          * 从uri中获取path路径
          */
+        @JvmStatic
         fun getPathForUri(
             context: Context,
             path: String,
@@ -386,6 +387,7 @@ class PhotoUtil {
         /**
          * 鲁班压缩
          */
+        @JvmStatic
         fun compress(
             context: Context,
             path: String,
