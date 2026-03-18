@@ -27,35 +27,36 @@ class PhotoUtil {
         listener: PhotoCallBackListener,
     ) {
         mContext = activity
-        openPhotoCamera(PictureSelector.create(activity), listener)
+        openPhotoCamera(PictureSelector.create(activity), activity, listener)
     }
 
     fun openPhotoCamera(
         fragment: Fragment,
         listener: PhotoCallBackListener,
     ) {
-        if (fragment.context != null) {
-            mContext = fragment.context
+        val ctx = fragment.context
+        if (ctx != null) {
+            mContext = ctx
         }
-        openPhotoCamera(PictureSelector.create(fragment), listener)
+        openPhotoCamera(PictureSelector.create(fragment), ctx, listener)
     }
 
     private fun openPhotoCamera(
         pictureSelector: PictureSelector,
+        context: Context?,
         listener: PhotoCallBackListener,
     ) {
         pictureSelector
             .openCamera(SelectMimeType.ofImage())
             .setCompressEngine(
-                CompressFileEngine { context, source, call ->
+                CompressFileEngine { engineContext, source, call ->
                     Luban
-                        .with(context)
+                        .with(engineContext)
                         .load(source)
                         .ignoreBy(100)
                         .setCompressListener(
                             object : OnNewCompressListener {
-                                override fun onStart() {
-                                }
+                                override fun onStart() {}
 
                                 override fun onSuccess(
                                     source: String?,
@@ -73,14 +74,17 @@ class PhotoUtil {
                             },
                         ).launch()
                 },
-            ) // 压缩
+            )
             .forResult(
                 object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>?) {
-                        if (result != null && result.isNotEmpty()) {
-                            mListPhoto.add(0, getPath(result[0]!!))
-                            listener.onCallBack(mListPhoto)
+                        val list = mutableListOf<String>()
+                        result?.firstOrNull()?.let { media ->
+                            list.add(getPath(context, media))
                         }
+                        mListPhoto.clear()
+                        mListPhoto.addAll(list)
+                        listener.onCallBack(mListPhoto)
                     }
 
                     override fun onCancel() {
@@ -99,7 +103,7 @@ class PhotoUtil {
         spanCount: Int = 4,
     ) {
         mContext = activity
-        openPhotoGallery(PictureSelector.create(activity), listener, maxSize, spanCount)
+        openPhotoGallery(PictureSelector.create(activity), activity, listener, maxSize, spanCount)
     }
 
     @JvmOverloads
@@ -109,31 +113,32 @@ class PhotoUtil {
         maxSize: Int = 9,
         spanCount: Int = 4,
     ) {
-        if (fragment.context != null) {
-            mContext = fragment.context
+        val ctx = fragment.context
+        if (ctx != null) {
+            mContext = ctx
         }
-        openPhotoGallery(PictureSelector.create(fragment), listener, maxSize, spanCount)
+        openPhotoGallery(PictureSelector.create(fragment), ctx, listener, maxSize, spanCount)
     }
 
     private fun openPhotoGallery(
         pictureSelector: PictureSelector,
+        context: Context?,
         listener: PhotoCallBackListener,
         maxSize: Int,
-        SpanCount: Int,
+        spanCount: Int,
     ) {
         pictureSelector
             .openGallery(SelectMimeType.ofImage())
             .setImageEngine(GlideEngine.createGlideEngine())
             .setCompressEngine(
-                CompressFileEngine { context, source, call ->
+                CompressFileEngine { engineContext, source, call ->
                     Luban
-                        .with(context)
+                        .with(engineContext)
                         .load(source)
                         .ignoreBy(100)
                         .setCompressListener(
                             object : OnNewCompressListener {
-                                override fun onStart() {
-                                }
+                                override fun onStart() {}
 
                                 override fun onSuccess(
                                     source: String?,
@@ -151,22 +156,22 @@ class PhotoUtil {
                             },
                         ).launch()
                 },
-            ).setSelectionMode(if (maxSize > 1) SelectModeConfig.MULTIPLE else SelectModeConfig.SINGLE)
-            .setMaxSelectNum(maxSize) // 图片最大选择数量
-            .setImageSpanCount(SpanCount) // 相册列表每行显示个数
-            .isPreviewImage(true) // 是否显示预览
-            .isDisplayCamera(false) // 是否显示相机入口
+            )
+            .setSelectionMode(if (maxSize > 1) SelectModeConfig.MULTIPLE else SelectModeConfig.SINGLE)
+            .setMaxSelectNum(maxSize)
+            .setImageSpanCount(spanCount)
+            .isPreviewImage(true)
+            .isDisplayCamera(false)
             .forResult(
                 object : OnResultCallbackListener<LocalMedia?> {
-                    override fun onResult(result: java.util.ArrayList<LocalMedia?>?) {
-                        if (result != null && result.isNotEmpty()) {
-                            mListPhoto.clear()
-                            result.forEach {
-                                val path = getPath(it!!)
-                                mListPhoto.add(path)
+                    override fun onResult(result: ArrayList<LocalMedia?>?) {
+                        mListPhoto.clear()
+                        result?.forEach { media ->
+                            media?.let {
+                                mListPhoto.add(getPath(context, it))
                             }
-                            listener.onCallBack(mListPhoto)
                         }
+                        listener.onCallBack(mListPhoto)
                     }
 
                     override fun onCancel() {
@@ -189,7 +194,7 @@ class PhotoUtil {
         videoQuality: Int = 1,
     ) {
         mContext = activity
-        openVideoCamera(PictureSelector.create(activity), listener, maxDuration, videoQuality)
+        openVideoCamera(PictureSelector.create(activity), activity, listener, maxDuration, videoQuality)
     }
 
     @JvmOverloads
@@ -199,30 +204,33 @@ class PhotoUtil {
         maxDuration: Int = 60,
         videoQuality: Int = 1,
     ) {
-        if (fragment.context != null) {
-            mContext = fragment.context
+        val ctx = fragment.context
+        if (ctx != null) {
+            mContext = ctx
         }
-        openVideoCamera(PictureSelector.create(fragment), listener, maxDuration, videoQuality)
+        openVideoCamera(PictureSelector.create(fragment), ctx, listener, maxDuration, videoQuality)
     }
 
     private fun openVideoCamera(
         pictureSelector: PictureSelector,
+        context: Context?,
         listener: PhotoCallBackListener,
         maxDuration: Int,
         videoQuality: Int,
     ) {
         pictureSelector
             .openCamera(SelectMimeType.ofVideo())
-            .setRecordVideoMaxSecond(maxDuration) // 视频录制最大时长
-            .setRecordVideoMinSecond(1) // 视频录制最小时长
-            .setVideoQuality(videoQuality) // 系统相机录制视频质量
+            .setRecordVideoMaxSecond(maxDuration)
+            .setRecordVideoMinSecond(1)
+            .setVideoQuality(videoQuality)
             .forResult(
                 object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>?) {
-                        if (result != null && result.isNotEmpty()) {
-                            mListPhoto.add(0, getPath(result[0]!!))
-                            listener.onCallBack(mListPhoto)
+                        mListPhoto.clear()
+                        result?.firstOrNull()?.let { media ->
+                            mListPhoto.add(getPath(context, media))
                         }
+                        listener.onCallBack(mListPhoto)
                     }
 
                     override fun onCancel() {
@@ -240,7 +248,8 @@ class PhotoUtil {
         maxSize: Int = 9,
         spanCount: Int = 4,
     ) {
-        openVideoGallery(PictureSelector.create(activity), listener, maxSize, spanCount)
+        mContext = activity
+        openVideoGallery(PictureSelector.create(activity), activity, listener, maxSize, spanCount)
     }
 
     @JvmOverloads
@@ -250,11 +259,16 @@ class PhotoUtil {
         maxSize: Int = 9,
         spanCount: Int = 4,
     ) {
-        openVideoGallery(PictureSelector.create(fragment), listener, maxSize, spanCount)
+        val ctx = fragment.context
+        if (ctx != null) {
+            mContext = ctx
+        }
+        openVideoGallery(PictureSelector.create(fragment), ctx, listener, maxSize, spanCount)
     }
 
     private fun openVideoGallery(
         pictureSelector: PictureSelector,
+        context: Context?,
         listener: PhotoCallBackListener,
         maxSize: Int = 9,
         spanCount: Int = 4,
@@ -263,26 +277,25 @@ class PhotoUtil {
             .openGallery(SelectMimeType.ofVideo())
             .setImageEngine(GlideEngine.createGlideEngine())
             .setVideoPlayerEngine(ExoPlayerEngine())
-            .isDisplayCamera(false) //  是否显示相机入口
-            .isAutoVideoPlay(false) // 预览视频是否自动播放
-            .isLoopAutoVideoPlay(false) // 预览视频是否循环播放
-            .isUseSystemVideoPlayer(false) // 使用系统播放器
+            .isDisplayCamera(false)
+            .isAutoVideoPlay(false)
+            .isLoopAutoVideoPlay(false)
+            .isUseSystemVideoPlayer(false)
             .setSelectionMode(if (maxSize > 1) SelectModeConfig.MULTIPLE else SelectModeConfig.SINGLE)
-            .isVideoPauseResumePlay(true) // 视频支持暂停与播放
-            .isPreviewVideo(true) // 是否支持预览视频
-            .setMaxSelectNum(maxSize) // 视频最大选择数量
-            .setImageSpanCount(spanCount) // 相册列表每行显示个数
+            .isVideoPauseResumePlay(true)
+            .isPreviewVideo(true)
+            .setMaxSelectNum(maxSize)
+            .setImageSpanCount(spanCount)
             .forResult(
-                object : OnResultCallbackListener<LocalMedia> {
-                    override fun onResult(result: java.util.ArrayList<LocalMedia>?) {
-                        if (result != null && result.isNotEmpty()) {
-                            mListPhoto.clear()
-                            result.forEach {
-                                val path = getPath(it)
-                                mListPhoto.add(path)
+                object : OnResultCallbackListener<LocalMedia?> {
+                    override fun onResult(result: ArrayList<LocalMedia?>?) {
+                        mListPhoto.clear()
+                        result?.forEach { media ->
+                            media?.let {
+                                mListPhoto.add(getPath(context, it))
                             }
-                            listener.onCallBack(mListPhoto)
                         }
+                        listener.onCallBack(mListPhoto)
                     }
 
                     override fun onCancel() {
@@ -297,25 +310,28 @@ class PhotoUtil {
         try {
             Uri.parse(uriString)
             true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
 
-    private fun getPath(localMedia: LocalMedia): String {
+    private fun getPath(context: Context?, localMedia: LocalMedia): String {
         var path = ""
+
         if (localMedia.isCompressed) {
-            path = localMedia.compressPath // 压缩路径
+            path = localMedia.compressPath
         }
         if (TextUtils.isEmpty(path)) {
-            path = localMedia.availablePath // 可用路径
+            path = localMedia.availablePath
+        }
+        if (TextUtils.isEmpty(path)) {
+            path = localMedia.realPath
+        }
+        if (TextUtils.isEmpty(path)) {
+            path = localMedia.path
         }
 
         if (TextUtils.isEmpty(path)) {
-            path = localMedia.realPath // 真实路径，图片最大，没有压缩的那种
-        }
-
-        if (TextUtils.isEmpty(path)) {
-            path = localMedia.path // content://media/external/images/media/1000013389
+            return ""
         }
 
         val uri = isUri(path)
@@ -323,17 +339,11 @@ class PhotoUtil {
             val parse = Uri.parse(path)
             val scheme = parse.scheme
             if (TextUtils.isEmpty(scheme)) {
-                parse.path?.let {
-                    path = it
-                }
+                parse.path?.let { path = it }
             } else if (TextUtils.equals(ContentResolver.SCHEME_FILE, scheme)) {
-                // file:// 开头的
-                parse.path?.let {
-                    path = it
-                }
+                parse.path?.let { path = it }
             } else if (TextUtils.equals(ContentResolver.SCHEME_CONTENT, scheme)) {
-                // 使用选择器的三方类库去获取
-                path = PictureFileUtils.getPath(mContext, parse)
+                path = context?.let { PictureFileUtils.getPath(it, parse) } ?: ""
             }
         }
         return path
@@ -352,20 +362,12 @@ class PhotoUtil {
             if (uri != null) {
                 val scheme = uri.scheme
                 if (TextUtils.isEmpty(scheme)) {
-                    uri.path?.let {
-                        tempPath = it
-                    }
+                    uri.path?.let { tempPath = it }
                 } else if (TextUtils.equals(ContentResolver.SCHEME_FILE, scheme)) {
-                    // file:// 开头的
-                    uri.path?.let {
-                        tempPath = it
-                    }
+                    uri.path?.let { tempPath = it }
                 } else if (TextUtils.equals(ContentResolver.SCHEME_CONTENT, scheme)) {
-                    // 使用选择器的三方类库去获取
                     tempPath = PictureFileUtils.getPath(context, uri)
                 }
-            } else {
-                println("uri is null, stop...")
             }
             return tempPath
         }
@@ -385,8 +387,7 @@ class PhotoUtil {
                 .ignoreBy(100)
                 .setCompressListener(
                     object : OnNewCompressListener {
-                        override fun onStart() {
-                        }
+                        override fun onStart() {}
 
                         override fun onSuccess(
                             source: String?,
